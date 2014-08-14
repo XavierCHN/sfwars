@@ -182,6 +182,8 @@
 		"AbilityManaCost"				"0"
 		"MaxLevel"						"1"
 
+		"AbilityTextureName"			"nevermore_shadowraze1"
+
 		"OnSpellStart"
 		{
 			"RunScript"
@@ -189,6 +191,14 @@
 				"ScriptFile"			"scripts/vscripts/addon_game_mode.lua"
 				"Target"				"CASTER"
 				"Function"				"OnRaze"
+			}
+		}
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"shadowraze_range"		"200"
 			}
 		}
 	}
@@ -205,6 +215,7 @@
 		"AbilityManaCost"				"0"
 		"MaxLevel"						"1"
 
+		"AbilityTextureName"			"nevermore_shadowraze2"
 		"OnSpellStart"
 		{
 			"RunScript"
@@ -214,6 +225,15 @@
 				"Function"				"OnRaze"
 			}
 		}
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"shadowraze_range"		"450"
+			}
+		}
+
 	}
 	"sfwars_shadowraze_3"
 	{
@@ -228,6 +248,7 @@
 		"AbilityManaCost"				"0"
 		"MaxLevel"						"1"
 
+		"AbilityTextureName"			"nevermore_shadowraze3"
 		"OnSpellStart"
 		{
 			"RunScript"
@@ -235,6 +256,14 @@
 				"ScriptFile"			"scripts/vscripts/addon_game_mode.lua"
 				"Target"				"CASTER"
 				"Function"				"OnRaze"
+			}
+		}
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"shadowraze_range"		"700"
 			}
 		}
 	}

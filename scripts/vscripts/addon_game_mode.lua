@@ -12,6 +12,34 @@ CUSTOM_STATE_IN_ROUND = 1
 CUSTOM_STATE_ROUND_REST = 2
 CUSTOM_STATE_GAME_END = 3
 
+
+BASE_RAZE_DAMAGE = 200
+BASE_RAZE_RADIUS = 250
+
+BASE_RAZE_PARTIC = {
+	'particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf'
+}
+
+RAZE_DATA = {}
+for i=0,9 do
+	RAZE_DATA[i] = {}
+	RAZE_DATA[i].RazeDamage = BASE_RAZE_DAMAGE
+	RAZE_DATA[i].RazeRadius = BASE_RAZE_RADIUS
+	RAZE_DATA[i].RazePartic = BASE_RAZE_PARTIC
+end
+
+RAZE_BUILD = {}
+for i=0,9 do
+	RAZE_BUILD[i] = 
+	{
+		["moonlight_raze"] = 0,
+		["sensitive_raze"] = 0,
+		["overpower_raze"] = 0
+	}
+end
+
+--require('sfwarshero')
+
 if SFWarsMode == nil then
 	SFWarsMode = class({})
 end
@@ -27,6 +55,21 @@ function SFWarsMode:InitGameMode()
 	self:SetGameRules()
 	self:RegisterEventListener()
 	self:StartThink()
+
+	self.RazeData = {}
+
+end
+
+function Precache( context )
+	--[[
+		Precache things we know we'll use.  Possible file types include (but not limited to):
+			PrecacheResource( "model", "*.vmdl", context )
+			PrecacheResource( "soundfile", "*.vsndevts", context )
+			PrecacheResource( "particle", "particles/units/heroes/hero_mirana/mirana_starfall_attack.vpcf", context )
+			PrecacheResource( "particle_folder", "particles/folder", context )
+	]]
+	PrecacheResource( "particle", "particles/units/heroes/hero_mirana/mirana_starfall_attack.vpcf", context )
+
 end
 
 function SFWarsMode:InitPara()
@@ -45,18 +88,13 @@ function SFWarsMode:SetGameRules()
 	GameRules:SetPreGameTime( TIME_PRE_GAME )
 	GameRules:SetPostGameTime( TIME_POST_GAME )
 	GameRules:SetTreeRegrowTime( 60.0 )
-	--GameRules:SetHeroMinimapIconSize( 400 )
-	--GameRules:SetCreepMinimapIconScale( 0.7 )
-	--GameRules:SetRuneMinimapIconScale( 0.7 )
 	GameRules:SetGoldTickTime( GOLD_TICK_TIME )
 	GameRules:SetGoldPerTick( GOLD_PER_TICK )
-	--GameRules:GetGameModeEntity():SetRemoveIllusionsOnDeath( true )
 	GameRules:GetGameModeEntity():SetTopBarTeamValuesOverride( true )
-	--GameRules:GetGameModeEntity():SetTopBarTeamValuesVisible( false )
 end
 
 function SFWarsMode:RegisterEventListener()
-	ListenToGameEvent( "entity_killed", Dynamic_Wrap( SFWarsMode, "OnEntityKilled" ), self )
+	--ListenToGameEvent( "entity_killed", Dynamic_Wrap( SFWarsMode, "OnEntityKilled" ), self )
 	ListenToGameEvent('npc_spawned',Dynamic_Wrap(SFWarsMode,"OnNPCSpawned"),self)
 
 	--ListenToGameEvent('sf_wars_increase_raze_damage0',Dynamic_Wrap(SFWarsMode,"OnInCreaseRazeDamagez"),self)
@@ -144,7 +182,7 @@ function SFWarsMode:ThinkInRound(dt)
 				if hHero:IsAlive() then
 					if hPlayer:GetTeam() == DOTA_TEAM_GOODGUYS then
 						nGoodAlive = nGoodAlive + 1
-					elseif hPlayer:GEtTeam() == DOTA_TEAM_BADGUYS then
+					elseif hPlayer:GetTeam() == DOTA_TEAM_BADGUYS then
 						nBadAlive = nBadAlive  + 1
 					end
 				end
@@ -227,7 +265,7 @@ end
 function SFWarsMode:OnNPCSpawned(keys)
 	print('FUNCTION NPC SPAWN CALLED')
 	local entity = EntIndexToHScript(keys.entindex)
-	if entity then print(entity:GetUnitName()) end
+	if entity then print(entity:GetUnitName()) else return end
 	if entity:GetUnitName() == 'npc_dota_hero_nevermore' then
 		for i = 0,4 do
 			local ability = entity:GetAbilityByIndex(i)
@@ -235,50 +273,23 @@ function SFWarsMode:OnNPCSpawned(keys)
 		end
 		entity:SetAbilityPoints(0)
 	end
-
-	local player = entity:GetOwner()
-	if not self._hideHud[player] then
-		self:HideHud()
-		self._hideHud[player] = true
-	end
-end
-
-function SFWarsMode:HideHud()
-	print('function hide hud called')
-	SendToServerConsole('sv_cheats 1')
-	SendToConsole('dota_sf_hud_actionpanel 0')--去除技能动作条
-	SendToConsole('dota_sf_hud_inventory 0')--去除物品栏
-	SendToConsole('dota_sf_hud_top 0')--去除上边栏
-	SendToConsole('dota_hud_healthbars 0 ')--去除血条
-	SendToConsole('dota_no_minimap 1')--去除小地图
-	SendToConsole('dota_sf_hud_stats_dropdown 0')--去除左上角
-	SendToConsole('cl_drawhud 0')
-	SendToConsole('dota_sf_hud_overlay 0')
-	SendToConsole('dota_render_crop_height 0')
-	SendToConsole('dota_render_y_inset 0')
-	SendToConsole('dota_free_camera 1')
-	SendToServerConsole('sv_cheats 0')
 end
 
 -- ABILITY HOOKS
 function OnRaze(keys)
-	for k,v in pairs(keys) do
-		print(k..'[]'..tostring(v))
-	end
 	local caster = keys.caster or EntIndexToHScript(keys.caster_entindex)
 	local ABILITY = keys.ability
 
 	local casterOrigin = caster:GetOrigin()
 	local casterFV = caster:GetForwardVector()
+	
+	local playerid = caster:GetPlayerID() 
 
-	if caster:GetContext('raze_damage') == nil then
-		caster:SetContext('raze_damage','250',0)
-	end
-	if caster:GetContext('bonus_radius') == nil then
-		caster:SetContext('bonus_radius','0',0)
-	end
-	local nRazeDamage = caster:GetContext('raze_damage')
-	local nRazeRadius = caster:GetContext('bonus_radius') + 250
+
+	local nRazeDamage = RAZE_DATA[playerid].RazeDamage
+	local nRazeRadius = RAZE_DATA[playerid].RazeRadius
+	local vRazeParticles = RAZE_DATA[playerid].RazePartic
+
 	local nRazeRange = 0
 	if ABILITY:GetName() == 'sfwars_shadowraze_1' then
 		nRazeRange = 200
@@ -289,12 +300,16 @@ function OnRaze(keys)
 	end
 
 	local vCenter = casterOrigin + (casterFV * nRazeRange)
-	print(tostring(vCenter))
+	for k,v in pairs(vRazeParticles) do
+		local nPIndex = ParticleManager:CreateParticle( 
+			v ,
+			PATTACH_CUSTOMORIGIN,caster)
 
-	local nPIndex = ParticleManager:CreateParticle('particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf',
-		PATTACH_CUSTOMORIGIN,caster)
-	ParticleManager:SetParticleControl(nPIndex,0,vCenter)
-	ParticleManager:ReleaseParticleIndex(nPIndex)
+		ParticleManager:SetParticleControl(nPIndex,0,vCenter)
+		ParticleManager:SetParticleControl(nPIndex,3,Vector(nRazeRadius,nRazeRadius,nRazeRadius))
+		ParticleManager:ReleaseParticleIndex(nPIndex)
+	end
+	
 	
 	local targets = FindUnitsInRadius(
 		caster:GetTeam(),       --caster team
@@ -302,12 +317,15 @@ function OnRaze(keys)
         nil,                    --find entity
         nRazeRadius,                    --find radius
         DOTA_UNIT_TARGET_TEAM_ENEMY,
-        DOTA_UNIT_TARGET_ALL,
+        DOTA_UNIT_TARGET_HERO,
         0, FIND_CLOSEST,
         false
 	)
+
+	print('RAZE DAMAGE'..nRazeDamage)
+	print('RAZE RADIUS'..nRazeRadius)
+
 	if targets then
-		print('target found  '..#targets)
 		for k,v in pairs(targets) do
 			local damage_dealt = ApplyDamage({
 				victim = v,
@@ -321,5 +339,71 @@ function OnRaze(keys)
 				print('damage_deal .. '..damage_dealt)
 			end
 		end
+	end
+end
+
+
+
+
+
+-- ITEMS
+function OnItemShengjieWangePurchased(keys)
+    local caster = keys.caster
+    if not caster:FindAbilityByName('ability_shengjiewange') then
+        caster:AddAbility('sfwars_requiem_holy') 
+    end
+    caster:SwapAbilities('sfwars_requiem_init','sfwars_requiem_holy',false,true)
+    caster:FindAbilityByName('sfwars_requiem_holy'):SetLevel(1)
+end
+
+function OnItemJingzhunYingyaPurchased(keys)
+    local plyid = keys.caster:GetPlayerID()
+    RAZE_DATA[plyid].RazeDamage = RAZE_DATA[plyid].RazeDamage + tonumber(keys.BonusDamage)
+    RAZE_DATA[plyid].RazeRadius = RAZE_DATA[plyid].RazeRadius - tonumber(keys.RaduceRadius)
+end
+
+function OnItemLiuxingYingyaPurchased(keys)
+    local plyid = keys.caster:GetPlayerID()
+	table.insert(RAZE_DATA[plyid].RazePartic ,"particles/units/heroes/hero_mirana/mirana_starfall_attack.vpcf")
+	for i=0,2 do
+		local ABILITY = keys.caster:GetAbilityByIndex(i)
+		local castpoint = ABILITY:GetCastPoint()
+		ABILITY:SetOverrideCastPoint(castpoint + tonumber(keys.ReduceCastPoint))
+	end
+	 RAZE_DATA[plyid].RazeRadius = RAZE_DATA[plyid].RazeRadius + tonumber(keys.BonusRadius)
+end
+
+function OnItemChaojiYingyaPurchased(keys)
+	local plyid = keys.caster:GetPlayerID()
+    RAZE_DATA[plyid].RazeDamage = RAZE_DATA[plyid].RazeDamage + tonumber(keys.BonusDamage)
+    RAZE_DATA[plyid].RazeRadius = RAZE_DATA[plyid].RazeRadius + tonumber(keys.BonusRadius)
+end
+
+function OnItemFanweitishengPurchased(keys)
+	local caster = keys.caster
+	local plyid = caster:GetPlayerID()
+
+	local modifier_count = caster:GetModifierCount()
+
+	local chaojiyingya_count = 0
+	local jingzhunyingya = false
+	for i=0,modifier_count -1 do
+		local modifiername = caster:GetModifierNameByIndex(i)
+		print("MODIFIER CATCHED,NAME:"..modifiername)
+		if modifiername == "modifier_fanweitisheng_counter" then
+			chaojiyingya_count = chaojiyingya_count + 1
+		end
+		if modifiername == 'modifier_jingzhunyingya_interlock' then
+			jingzhunyingya = true
+		end
+	end
+	if jingzhunyingya then
+		SendCustomMessage('JIGNZHUN', caster:GetTeam() , 0)
+		return
+	end
+	if chaojiyingya_count > 5 then
+		SendCustomMessage('GOULE', caster:GetTeam() , 0)
+	else
+		RAZE_DATA[plyid].RazeRadius = RAZE_DATA[plyid].RazeRadius + tonumber(keys.BonusRadius)
 	end
 end

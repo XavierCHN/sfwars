@@ -23,5 +23,7 @@
 		"Ability5"					"sfwars_requiem_init"
 		"Ability6"					""
 		"Ability7"					""
+
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
 	}
 }

@@ -1,79 +1,293 @@
 "DOTAAbilities"
 {
-	//=================================================================================================================
-	// Recipe: Arcane Boots
-	//=================================================================================================================
-	"item_recipe_arcane_boots2"
+	"item_shengjiewange"
 	{
-		"ID"							"1005"
-
-		"BaseClass"						"item_recipe_arcane_boots"
-
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"0"	
-		"ItemShopTags"					""
-		
-		// Recipe
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemRecipe"					"1"
-		"ItemResult"					"item_arcane_boots2"
-		"ItemRequirements"
-		{
-			"01"						"item_energy_booster;item_arcane_boots"
-		}
-	}
-	
-	//=================================================================================================================
-	// Arcane Boots II
-	//=================================================================================================================
-	"item_arcane_boots2"
-	{
-		"ID"							"1006"
+		"ID"							"1000"
 
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
-		"BaseClass"						"item_arcane_boots"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName"			"item_shengjiewange"
 
 		// Stats		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"55.0"
+		"AbilityCooldown"				"0.0"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"25"
+		"AbilityManaCost"				"0"
 		"ItemCost"						"2450"
-		"ItemShopTags"					"move_speed;boost_mana;mana_pool"
 		"ItemQuality"					"rare"
 		"ItemDeclarations"				"DECLARE_PURCHASES_TO_SPECTATORS"
 		"ItemDisassembleRule"			"0"
-		"ItemAlertable"					"1"
-		"ItemAliases"					"mana;mb"
-		
-		// Special	
+		"ItemPermanent"					"0"
+		"ItemInitialCharges"			"1"
+
+		"Modifiers"
+		{
+			"modifier_item_auto_applier"
+			{
+				"Passive"		"1"
+				"OnCreated"
+				{
+					"SpendCharge"
+					{}
+					"RunScript"
+					{
+						"ScriptFile"	"scripts/vscripts/addon_game_mode.lua"
+						"Target"		"CASTER"
+						"Function"		"OnItemShengjieWangePurchased"
+					}
+				}
+			}
+		}
+	}
+	"item_jingzhunyingya"
+	{
+		"ID"							"1001"
+
+		// General
 		//-------------------------------------------------------------------------------------------------------------
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName"			"item_jingzhunyingya"
+
+		// Stats		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+		"ItemCost"						"2450"
+		"ItemQuality"					"rare"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_SPECTATORS"
+		"ItemDisassembleRule"			"0"
+		"ItemPermanent"					"0"
+		"ItemInitialCharges"			"1"
+
+		"Modifiers"
+		{
+			"modifier_item_auto_applier"
+			{
+				"Passive"		"1"
+				"OnCreated"
+				{
+					"SpendCharge"
+					{}
+					"RunScript"
+					{
+						"ScriptFile"	"scripts/vscripts/addon_game_mode.lua"
+						"Target"		"CASTER"
+						"RaduceRadius"	"75"
+						"BonusDamage"	"75"
+						"Function"		"OnItemJingzhunYingyaPurchased"
+					}
+					"ApplyModifier"
+					{
+						"ModifierName"	"modifier_jingzhunyingya_interlock"
+						"Target"		"CASTER"
+					}
+				}
+			}
+			"modifier_jingzhunyingya_interlock"
+			{
+				"Passive"		"0"
+			}
+		}
 		"AbilitySpecial"
 		{
 			"01"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_movement"		"75"
+				"var_type"		"FIELD_INTEGER"
+				"radius_reduce"	"75"
 			}
 			"02"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_mana"			"500"
+				"var_type"		"FIELD_INTEGER"
+				"damage_bonus"	"75"
 			}
-			"03"
+		}
+	}
+	"item_liuxingyingya"
+	{
+		"ID"							"1002"
+
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName"			"item_liuxingyingya"
+
+		// Stats		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+		"ItemCost"						"2450"
+		"ItemQuality"					"rare"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_SPECTATORS"
+		"ItemDisassembleRule"			"0"
+		"ItemPermanent"					"0"
+		"ItemInitialCharges"			"1"
+
+		"Modifiers"
+		{
+			"modifier_item_auto_applier"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"replenish_radius"		"600"
+				"Passive"		"1"
+				"OnCreated"
+				{
+					"SpendCharge"
+					{}
+					"RunScript"
+					{
+						"ScriptFile"	"scripts/vscripts/addon_game_mode.lua"
+						"Target"		"CASTER"
+						"BonusRadius"	"50"
+						"ReduceCastPoint"	"0.5"
+						"Function"		"OnItemLiuxingYingyaPurchased"
+					}
+				}
 			}
-			"04"
+		}
+		"AbilitySpecial"
+		{
+			"01"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"replenish_amount"		"250"
+				"var_type"		"FIELD_INTEGER"
+				"radius_bonus"	"50"
+			}
+			"02"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"castpoint_reduce"	"0.5"
+			}
+		}
+	}
+	"item_chaojiyingya"
+	{
+		"ID"							"1003"
+
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName"			"item_chaojiyingya"
+
+		// Stats		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+		"ItemCost"						"3000"
+		"ItemQuality"					"rare"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_SPECTATORS"
+		"ItemDisassembleRule"			"0"
+		"ItemPermanent"					"0"
+		"ItemInitialCharges"			"1"
+
+		"Modifiers"
+		{
+			"modifier_item_auto_applier"
+			{
+				"Passive"		"1"
+				"OnCreated"
+				{
+					"SpendCharge"
+					{}
+					"RunScript"
+					{
+						"ScriptFile"	"scripts/vscripts/addon_game_mode.lua"
+						"Target"		"CASTER"
+						"BonusRadius"	"50"
+						"BonusDamage"	"20"
+						"Function"		"OnItemChaojiYingyaPurchased"
+					}
+				}
+			}
+		}
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"radius_bonus"	"50"
+			}
+			"02"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"damage_bonus"	"20"
+			}
+		}
+	}
+	"item_fanweitisheng"
+	{
+		"ID"							"1004"
+
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName"			"item_fanweitisheng"
+
+		// Stats		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+		"ItemCost"						"1000"
+		"ItemQuality"					"rare"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_SPECTATORS"
+		"ItemDisassembleRule"			"0"
+		"ItemPermanent"					"0"
+		"ItemInitialCharges"			"1"
+
+		"Modifiers"
+		{
+			"modifier_item_auto_applier"
+			{
+				"Passive"		"1"
+				"IsHidden"		"1"
+				"OnCreated"
+				{
+					"SpendCharge"
+					{}
+					"ApplyModifier"
+					{
+						"ModifierName"				"modifier_fanweitisheng_counter"
+						"Target"					"CASTER"
+					}
+					"RunScript"
+					{
+						"ScriptFile"	"scripts/vscripts/addon_game_mode.lua"
+						"Target"		"CASTER"
+						"BonusRadius"	"25"
+						"Function"		"OnItemFanweitishengPurchased"
+					}
+				}
+			}
+			"modifier_fanweitisheng_counter"
+			{
+				"IsDebuff"			"0"
+				"IsHidden"			"0"
+				"Passive"			"0"
+			}
+		}
+		}
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"radius_bonus"	"25"
 			}
 		}
 	}
